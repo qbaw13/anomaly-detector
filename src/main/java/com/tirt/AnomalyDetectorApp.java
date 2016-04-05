@@ -1,18 +1,20 @@
-import controller.DetectorController;
+package com.tirt;
+
+import com.tirt.controller.DetectorController;
+import com.tirt.model.DetectorModel;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import model.DetectorModel;
 
 /**
- * Created by Kuba on 26.03.2016.
+ * Created by Kuba on 05.04.2016.
  */
 public class AnomalyDetectorApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("./view/ui.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/ui.fxml"));
         loader.setControllerFactory(t -> new DetectorController(new DetectorModel()));
 
         stage.setScene(new Scene(loader.load()));
@@ -21,5 +23,6 @@ public class AnomalyDetectorApp extends Application {
 
     public static void main(String[] args) {
         launch(args);
+
     }
 }

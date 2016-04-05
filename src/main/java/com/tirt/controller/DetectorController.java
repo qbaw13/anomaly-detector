@@ -1,7 +1,7 @@
-package controller;
+package com.tirt.controller;
 
 import javafx.fxml.FXML;
-import model.DetectorModel;
+import com.tirt.model.DetectorModel;
 
 /**
  * Created by Kuba on 26.03.2016.
