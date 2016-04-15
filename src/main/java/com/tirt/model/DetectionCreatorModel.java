@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by Kuba on 26.03.2016.
+ * Created by Kuba on 15.04.2016.
  */
-public class DetectorModel {
+public class DetectionCreatorModel {
 
 }

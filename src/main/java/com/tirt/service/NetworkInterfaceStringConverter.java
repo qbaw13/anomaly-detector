@@ -10,9 +10,8 @@ import java.util.List;
 /**
  * Created by Kuba on 15.04.2016.
  */
-public class InterfaceStringConverter extends StringConverter<PcapNetworkInterface> {
+public class NetworkInterfaceStringConverter extends StringConverter<PcapNetworkInterface> {
 
-    DetectorModel detectorModel = new DetectorModel();
 
     @Override
     public String toString(PcapNetworkInterface networkInterface) {
@@ -23,7 +22,7 @@ public class InterfaceStringConverter extends StringConverter<PcapNetworkInterfa
     public PcapNetworkInterface fromString(String string) {
         List<PcapNetworkInterface> interfaces = null;
         try {
-            interfaces = detectorModel.obtainInterfaces();
+            interfaces = NetworkInterfaceReceiver.receiveNetworkInterfaces();
         } catch (IOException e) {
             e.printStackTrace();
         }

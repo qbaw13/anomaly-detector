@@ -1,19 +1,18 @@
 package com.tirt.controller;
 
-import com.tirt.service.InterfaceStringConverter;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import com.tirt.AnomalyDetectorApp;
+import com.tirt.model.DetectionCreatorModel;
 import javafx.fxml.FXML;
 import com.tirt.model.DetectorModel;
-import javafx.scene.control.ChoiceBox;
-import org.pcap4j.core.PcapNetworkInterface;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by Kuba on 26.03.2016.
@@ -27,24 +26,8 @@ public class DetectorController {
     public DetectorController(DetectorModel detectorModel){
         this.detectorModel = detectorModel;
     }
-
     @FXML
-    ChoiceBox<PcapNetworkInterface> interfaceChoiceBox;
-
-    @FXML
-    public void initialize() {
-        List<PcapNetworkInterface> networkInterfaces = null;
-        try {
-            networkInterfaces = detectorModel.obtainInterfaces();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ObjectProperty<ObservableList<PcapNetworkInterface>> networkInterfacesProperty = new SimpleObjectProperty<>();
-        networkInterfacesProperty.setValue(FXCollections.observableArrayList(networkInterfaces));
-        this.interfaceChoiceBox.itemsProperty().bindBidirectional(networkInterfacesProperty);
-        this.interfaceChoiceBox.setConverter(new InterfaceStringConverter());
-    }
-
+    Parent root;
 
     @FXML
     private void onNew(){
@@ -71,4 +54,28 @@ public class DetectorController {
         LOGGER.info("onClose");
     }
 
+    @FXML
+    private void onStart() {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("view/detection-creator.fxml"));
+        loader.setControllerFactory(t -> new DetectionCreatorController(new DetectionCreatorModel()));
+
+        Stage stage = new Stage();
+        try {
+            stage.setScene(new Scene(loader.load()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        stage.setTitle("Detection creator");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(AnomalyDetectorApp.primaryStage);
+        stage.setResizable(false);
+        stage.show();
+
+    }
+
+    @FXML
+    private void onPause() {
+
+    }
 }

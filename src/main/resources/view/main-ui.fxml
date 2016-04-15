@@ -5,7 +5,8 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tirt.controller.DetectorController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.tirt.controller.DetectorController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -36,11 +37,8 @@
    <bottom>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-          <Button mnemonicParsing="false" text="Start" />
-          <Button mnemonicParsing="false" text="Pause" />
-          <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-          <Label text="Select interface:" />
-          <ChoiceBox prefWidth="150.0" fx:id="interfaceChoiceBox"/>
+          <Button mnemonicParsing="false" onAction="#onStart" text="Start" />
+          <Button mnemonicParsing="false" onAction="#onPause" text="Pause" textOverrun="CLIP" disable="true"/>
         </items>
       </ToolBar>
    </bottom>
