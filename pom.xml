@@ -9,6 +9,9 @@
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
+        <!-- UTILITIES -->
+
+        <!-- PACKETS CAPTURING -->
         <dependency>
             <groupId>org.pcap4j</groupId>
             <artifactId>pcap4j-core</artifactId>
