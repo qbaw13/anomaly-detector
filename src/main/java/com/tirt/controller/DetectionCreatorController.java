@@ -1,6 +1,9 @@
 package com.tirt.controller;
 
+import com.tirt.api.EClusteringMethod;
 import com.tirt.model.DetectionCreatorModel;
+import com.tirt.service.ClusteringMethodMapper;
+import com.tirt.service.DetectorFactory;
 import com.tirt.service.NetworkInterfaceReceiver;
 import com.tirt.service.NetworkInterfaceStringConverter;
 import javafx.beans.property.ObjectProperty;
@@ -64,13 +67,16 @@ public class DetectionCreatorController {
 
     private void initRadioButtons() {
         toggleGroup = new ToggleGroup();
-
         radioButton1.setToggleGroup(toggleGroup);
         radioButton2.setToggleGroup(toggleGroup);
+        radioButton1.setText(EClusteringMethod.K_MEANS.toString());
+        radioButton2.setText(EClusteringMethod.HIERARCHICAL.toString());
     }
 
     @FXML
     private void onStart() {
+        Stage stage = (Stage) closeButton.getScene().getWindow();
+        stage.close();
         LOGGER.info("Detection started");
     }
 

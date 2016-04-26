@@ -71,7 +71,6 @@ public class DetectorController {
         stage.initOwner(AnomalyDetectorApp.primaryStage);
         stage.setResizable(false);
         stage.show();
-
     }
 
     @FXML
