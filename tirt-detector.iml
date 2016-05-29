@@ -16,5 +16,6 @@
     <orderEntry type="library" name="Maven: org.pcap4j:pcap4j-core:1.6.2" level="project" />
     <orderEntry type="library" name="Maven: net.java.dev.jna:jna:4.2.1" level="project" />
     <orderEntry type="library" name="Maven: org.pcap4j:pcap4j-packetfactory-static:1.6.2" level="project" />
+    <orderEntry type="library" name="weka" level="project" />
   </component>
 </module>

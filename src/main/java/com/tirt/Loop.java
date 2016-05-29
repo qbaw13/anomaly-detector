@@ -55,8 +55,7 @@ public class Loop {
 
     System.out.println(nif.getName() + "(" + nif.getDescription() + ")");
 
-    final PcapHandle handle
-      = nif.openLive(SNAPLEN, PcapNetworkInterface.PromiscuousMode.PROMISCUOUS, READ_TIMEOUT);
+    final PcapHandle handle = nif.openLive(SNAPLEN, PcapNetworkInterface.PromiscuousMode.PROMISCUOUS, READ_TIMEOUT);
 
     if (filter.length() != 0) {
       handle.setFilter(

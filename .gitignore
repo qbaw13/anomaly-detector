@@ -12,6 +12,8 @@ hs_err_pid*
 .iws
 workspace.xml
 tasks.xml
+*/idea
+./idea
 
 # JavaFX
 */bin
