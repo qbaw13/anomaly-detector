@@ -1,7 +1,7 @@
 package com.tirt.service;
 
+import com.tirt.api.Clusterer;
 import com.tirt.api.ClusteringMethod;
-import com.tirt.api.Detector;
 import javafx.scene.chart.Chart;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by Kuba on 18.04.2016.
  */
-public class DetectorImpl implements Detector {
+public class ClustererImpl implements Clusterer {
 
 
     @Override

@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by Kuba on 18.04.2016.
  */
-public interface Detector {
+public interface Clusterer {
 
     public void setClusteringMethod(ClusteringMethod clusteringMethod);
 

@@ -25,7 +25,7 @@ public class AnomalyDetectorApp extends Application {
         loader.setControllerFactory(t -> new DetectorController(new DetectorModel()));
         LOGGER.info("Main scene controller and model created");
 
-        stage.setTitle("Anomaly Detector");
+        stage.setTitle("Anomaly Clusterer");
         stage.setScene(new Scene(loader.load()));
         stage.show();
 
