@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by Kuba on 18.04.2016.
  */
-public class ClustererImpl extends Service<Void> {
+public class ClustererImpl extends Service<Void> implements Clusterer{
 
     private ClusteringMethod clusteringMethod;
     private List<Cluster> clusters;
@@ -40,5 +40,10 @@ public class ClustererImpl extends Service<Void> {
 
     public ClusteringMethod getClusteringMethod() {
         return null;
+    }
+
+    @Override
+    public void setData(List<Point> points) {
+
     }
 }
