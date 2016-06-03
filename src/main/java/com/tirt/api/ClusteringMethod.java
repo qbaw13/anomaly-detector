@@ -1,6 +1,7 @@
 package com.tirt.api;
 
 import com.tirt.entity.Cluster;
+import com.tirt.entity.Point;
 
 import java.util.List;
 
@@ -9,5 +10,7 @@ import java.util.List;
  */
 public interface ClusteringMethod {
 
-    public List<Cluster> execute();
+    List<Cluster> execute();
+
+    void setPoints(List<Point> points);
 }

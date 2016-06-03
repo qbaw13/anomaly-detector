@@ -79,6 +79,7 @@ public class DetectorController {
         setButtonsOnStart();
         Sniffer sniffer = detectorModel.createSniffer(interfaceChoiceBox.getSelectionModel().getSelectedItem(), packetsCount);
         detectorModel.startSniffer(sniffer);
+
         EClusteringMethod selectedMethod = ClusteringMethodMapper.map(toggleGroup.getSelectedToggle().toString());
         Clusterer clusterer = detectorModel.createClusterer(selectedMethod, clustersCount);
 
