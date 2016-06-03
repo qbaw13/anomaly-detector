@@ -52,27 +52,39 @@ public class Point {
 
     //Calculates the distance between two points.
     public static double distance(Point p, Point centroid) {
+//        return Math.sqrt(Math.pow((centroid.getY() - p.getY()), 2) + Math.pow((centroid.getX() - p.getX()), 2));
         return Math.sqrt(Math.pow((centroid.getY() - p.getY()), 2) + Math.pow((centroid.getX() - p.getX()), 2));
     }
-    
-    //Creates random point
-    public static Point createRandomPoint(int min, int max) {
-    	Random r = new Random();
-    	double x = min + (max - min) * r.nextDouble();
-    	double y = min + (max - min) * r.nextDouble();
-    	return new Point(x,y);
-    }
 
-    public static List<Point> createRandomPoints(int min, int max, int number) {
-    	List points = new ArrayList(number);
-    	for(int i = 0; i < number; i++) {
-    		points.add(createRandomPoint(min,max));
-    	}
-    	return points;
-    }
-    
+    //Creates random point
+//    public static Point createRandomPoint() {
+//    	Random r = new Random();
+//
+//    	double x = min + (max - min) * r.nextDouble();
+//    	double y = min + (max - min) * r.nextDouble();
+//
+//    	return new Point(x,y);
+//    }
+//
+//    public static List<Point> createRandomPoints(int min, int max, int number) {
+//    	List points = new ArrayList(number);
+//    	for(int i = 0; i < number; i++) {
+//    		points.add(createRandomPoint(min,max));
+//    	}
+//    	return points;
+//    }
+//
     public String toString() {
     	DecimalFormat df = new DecimalFormat("#.##");
     	return "(" + df.format(x) + "; " + df.format(y) + ")";
+    }
+
+    public static Point createRandomPoint(double minX, double minY, double maxX, double maxY) {
+        Random r = new Random();
+
+    	double x = minX + (maxX - minX) * r.nextDouble();
+    	double y = minY + (maxY - minY) * r.nextDouble();
+
+    	return new Point(x,y);
     }
 }

@@ -19,6 +19,7 @@ public class Sniffer extends Service<Void>{
     private PcapStat pcapStat;
     private int packetsCount;
     private List<Packet> packets;
+    private List<Long> timestamps;
 
     private static final String COUNT_KEY
             = Sniffer.class.getName() + ".count";
@@ -41,7 +42,8 @@ public class Sniffer extends Service<Void>{
         return new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                packets = new LinkedList<>();
+                packets = new ArrayList<>();
+                timestamps = new ArrayList<>();
                 String filter = "";
                 PcapHandle handle = openLive(SNAPLEN, PcapNetworkInterface.PromiscuousMode.PROMISCUOUS, READ_TIMEOUT);
                 if (filter.length() != 0) {
@@ -60,6 +62,9 @@ public class Sniffer extends Service<Void>{
         return packets;
     }
 
+    public List<Long> getTimestamps() {
+        return timestamps;
+    }
 
     private PcapHandle openLive(int snaplen, PcapNetworkInterface.PromiscuousMode promiscuous, int readTimeout) {
         try {
@@ -86,6 +91,7 @@ public class Sniffer extends Service<Void>{
             public void gotPacket(Packet packet) {
                 System.out.println(handle.getTimestamp());
                 System.out.println(packet);
+                timestamps.add(handle.getTimestamp().getTime());
                 packets.add(packet);
             }
         };
