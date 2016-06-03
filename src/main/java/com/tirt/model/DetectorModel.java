@@ -2,6 +2,7 @@ package com.tirt.model;
 
 import com.tirt.api.Clusterer;
 import com.tirt.api.EClusteringMethod;
+import com.tirt.service.ClustererImpl;
 import com.tirt.utility.NetworkInterfaceReceiver;
 import com.tirt.service.Sniffer;
 import org.pcap4j.core.PcapNetworkInterface;
@@ -24,11 +25,13 @@ public class DetectorModel {
     }
 
     public Clusterer createClusterer(EClusteringMethod selectedMethod, int clusterCount) {
+        //if(selectedMethod = kmneans)
+            // return new Clusterre(..)
         return null;
     }
 
     public void startClusterer(Clusterer clusterer) {
-
+        ((ClustererImpl) clusterer).start();
     }
 
     public Sniffer createSniffer(PcapNetworkInterface pcapNetworkInterface, int packetsCount) {

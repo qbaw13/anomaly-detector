@@ -83,8 +83,12 @@ public class DetectorController {
         EClusteringMethod selectedMethod = ClusteringMethodMapper.map(toggleGroup.getSelectedToggle().toString());
         Clusterer clusterer = detectorModel.createClusterer(selectedMethod, clustersCount);
 
-//        clusterer.setData(PacketDataExtractor.extractSthAndSth(sniffer.getCapturedPackets()));
-//        detectorModel.startClusterer(clusterer);
+        //if koniec
+//          clusterer.setData(PacketDataExtractor.extractSthAndSth(sniffer.getCapturedPackets()));
+//          detectorModel.startClusterer(clusterer);
+
+            //if(koniec klasteryzacji)
+                // wyswietl wyniki
 
     }
 
