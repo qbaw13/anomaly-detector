@@ -1,4 +1,4 @@
-package com.tirt.service;
+package com.tirt.utility;
 
 import com.tirt.api.EClusteringMethod;
 

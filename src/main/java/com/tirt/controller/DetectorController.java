@@ -2,10 +2,9 @@ package com.tirt.controller;
 
 import com.tirt.api.Clusterer;
 import com.tirt.api.EClusteringMethod;
-import com.tirt.service.ClusteringMethodMapper;
+import com.tirt.utility.ClusteringMethodMapper;
 import com.tirt.utility.NetworkInterfaceStringConverter;
 import com.tirt.service.Sniffer;
-import com.tirt.utility.PacketDataExtractor;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
