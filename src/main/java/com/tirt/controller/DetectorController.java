@@ -85,7 +85,6 @@ public class DetectorController {
 //        clusterer.setData(PacketDataExtractor.extractSthAndSth(sniffer.getCapturedPackets()));
 //        detectorModel.startClusterer(clusterer);
 
-
     }
 
     @FXML

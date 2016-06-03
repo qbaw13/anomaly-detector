@@ -14,4 +14,5 @@ public class PacketDataExtractor {
     public static List<Point> extractSthAndSth(List<Packet> packets) {
         return new ArrayList<>();
     }
+    
 }
