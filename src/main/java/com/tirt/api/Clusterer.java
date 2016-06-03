@@ -1,5 +1,7 @@
 package com.tirt.api;
 
+import javafx.concurrent.Service;
+import javafx.concurrent.Worker;
 import javafx.scene.chart.Chart;
 
 import java.util.List;
@@ -12,18 +14,6 @@ public interface Clusterer {
     public void setClusteringMethod(ClusteringMethod clusteringMethod);
 
     public ClusteringMethod getClusteringMethod();
-
-    public void setCharts(List<Chart> charts);
-
-    public List<Chart> getCharts();
-
-    public void startDetecting();
-
-    public void pauseDetecting();
-
-    public void stopDetecting();
-
-    public Long getDetectingTime();
 
     public enum DetectingStatus {
         NOT_STARTED,

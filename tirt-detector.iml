@@ -10,10 +10,17 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="forester_1038" level="project" />
+    <orderEntry type="library" name="weka (2)" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.4" level="project" />
+    <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.2" level="project" />
+    <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.9" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.21" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-simple:1.7.21" level="project" />
     <orderEntry type="library" name="Maven: org.pcap4j:pcap4j-core:1.6.2" level="project" />
     <orderEntry type="library" name="Maven: net.java.dev.jna:jna:4.2.1" level="project" />
     <orderEntry type="library" name="Maven: org.pcap4j:pcap4j-packetfactory-static:1.6.2" level="project" />
+    <orderEntry type="library" name="yfiles-for-javafx" level="project" />
   </component>
 </module>

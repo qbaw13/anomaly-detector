@@ -60,24 +60,19 @@ public class KMeansMethod implements ClusteringMethod {
     }
 
     @Override
-    public void execute() {
-        double distance = -1; //dla pierwszego przebiegu
+    public List<Cluster> execute() {
+        double distance = -1;
         int iteration = 0;
         List<Point> lastCentroids = new ArrayList<>();
         List<Point> currentCentroids = new ArrayList<>();
 
-        // Add in new data, one at a time, recalculating centroids with each new one.
         while(isCentroidsChanged(distance)) {
-            //Clear cluster state
             clearClusters();
-
             lastCentroids.clear();
             lastCentroids.addAll(getCentroids());
 
-            //Assign points to the closer cluster
             assignCluster();
 
-            //Calculate new centroids.
             calculateCentroids();
 
             iteration++;
@@ -85,14 +80,13 @@ public class KMeansMethod implements ClusteringMethod {
             currentCentroids.clear();
             currentCentroids.addAll(getCentroids());
 
-            //Calculates total distance between new and old Centroids
             distance = distanceBetweenNewAndOldCentroids(lastCentroids, currentCentroids);
 
-            //Displaying
             plotIteration(iteration, distance);
             plotClusters();
-
         }
+
+        return clusters;
     }
     
     private boolean isCentroidsChanged(double distance){
@@ -173,4 +167,7 @@ public class KMeansMethod implements ClusteringMethod {
     	System.out.println("Centroid distances: " + df.format(distance));
     }
 
+    public void setPoints(List<Point> points) {
+        this.points = points;
+    }
 }

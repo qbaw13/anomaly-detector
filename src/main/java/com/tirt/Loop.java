@@ -1,14 +1,5 @@
 package com.tirt;
 
-//import com.sun.jna.Platform;
-//import org.pcap4j.core.BpfProgram.BpfCompileMode;
-//import org.pcap4j.core.*;
-//import org.pcap4j.core.PcapNetworkInterface.PromiscuousMode;
-//import org.pcap4j.packet.Packet;
-//import org.pcap4j.util.NifSelector;
-//
-//import java.io.IOException;
-
 import org.pcap4j.core.*;
 import org.pcap4j.packet.Packet;
 import org.pcap4j.util.NifSelector;

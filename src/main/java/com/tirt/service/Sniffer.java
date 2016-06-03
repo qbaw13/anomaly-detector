@@ -1,12 +1,18 @@
 package com.tirt.service;
 
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import org.pcap4j.core.*;
 import org.pcap4j.packet.Packet;
 
 /**
  * Created by Kuba on 15.04.2016.
  */
-public class Sniffer {
+public class Sniffer extends Service<Void>{
+
+    private PcapNetworkInterface pcapNetworkInterface;
+    private PcapStat pcapStat;
+    private int packetsCount;
 
     private static final String COUNT_KEY
             = Sniffer.class.getName() + ".count";
@@ -23,45 +29,90 @@ public class Sniffer {
     private static final int SNAPLEN
             = Integer.getInteger(SNAPLEN_KEY, 65536); // [bytes]
 
-    public void startSniffing(PcapNetworkInterface nif) throws PcapNativeException, NotOpenException {
-        String filter = ""; //filter
 
-        final PcapHandle handle = nif.openLive(SNAPLEN, PcapNetworkInterface.PromiscuousMode.PROMISCUOUS, READ_TIMEOUT);
-
+    @Override
+    protected Task<Void> createTask() {
+        String filter = "";
+        PcapHandle handle = openLive(SNAPLEN, PcapNetworkInterface.PromiscuousMode.PROMISCUOUS, READ_TIMEOUT);
         if (filter.length() != 0) {
-            handle.setFilter(
-                    filter,
-                    BpfProgram.BpfCompileMode.OPTIMIZE
-            );
+            setHandleFilter(handle, filter, BpfProgram.BpfCompileMode.OPTIMIZE);
         }
+        PacketListener listener = createListener(handle);
+        startLoop(handle, listener);
+        setStats(handle);
+        handle.close();
+        return null;
+    }
+    private PcapHandle openLive(int snaplen, PcapNetworkInterface.PromiscuousMode promiscuous, int readTimeout) {
+        try {
+            return pcapNetworkInterface.openLive(snaplen, promiscuous, readTimeout);
+        } catch (PcapNativeException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-        PacketListener listener
-                = new PacketListener() {
+    private void setHandleFilter(PcapHandle handle, String filter, BpfProgram.BpfCompileMode compileMode) {
+        try {
+            handle.setFilter(filter, compileMode);
+        } catch (PcapNativeException e) {
+            e.printStackTrace();
+        } catch (NotOpenException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private PacketListener createListener(PcapHandle handle) {
+        return new PacketListener() {
             @Override
             public void gotPacket(Packet packet) {
                 System.out.println(handle.getTimestamp());
                 System.out.println(packet);
             }
         };
+    }
 
+    private void startLoop(PcapHandle handle, PacketListener listener) {
         try {
-            handle.loop(COUNT, listener);
+            handle.loop(packetsCount, listener);
 
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } catch (PcapNativeException e) {
+            e.printStackTrace();
+        } catch (NotOpenException e) {
+            e.printStackTrace();
         }
+    }
 
-        PcapStat ps = handle.getStats();
-        System.out.println("ps_recv: " + ps.getNumPacketsReceived());
-        System.out.println("ps_drop: " + ps.getNumPacketsDropped());
-        System.out.println("ps_ifdrop: " + ps.getNumPacketsDroppedByIf());
-//    if (Platform.isWindows()) {
-        System.out.println("bs_capt: " + ps.getNumPacketsCaptured());
-//    }
+    private void setStats(PcapHandle handle) {
+        try {
+            setPcapStat(handle.getStats());
+        } catch (PcapNativeException e) {
+            e.printStackTrace();
+        } catch (NotOpenException e) {
+            e.printStackTrace();
+        }
+    }
 
-        handle.close();
+    public void setPcapNetworkInterface(PcapNetworkInterface pcapNetworkInterface) {
+        this.pcapNetworkInterface = pcapNetworkInterface;
+    }
+
+    public PcapNetworkInterface getPcapNetworkInterface() {
+        return pcapNetworkInterface;
     }
 
 
+    public PcapStat getPcapStat() {
+        return pcapStat;
+    }
 
+    public void setPcapStat(PcapStat pcapStat) {
+        this.pcapStat = pcapStat;
+    }
+
+    public void setPacketsCount(int packetsCount) {
+        this.packetsCount = packetsCount;
+    }
 }

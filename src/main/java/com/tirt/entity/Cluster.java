@@ -8,8 +8,7 @@ public class Cluster {
 	public List<Point> points;
 	public Point centroid;
 	public int id;
-	
-	//Creates a new Cluster
+
 	public Cluster(int id) {
 		this.id = id;
 		this.points = new ArrayList();
