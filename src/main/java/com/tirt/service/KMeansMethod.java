@@ -88,7 +88,12 @@ public class KMeansMethod implements ClusteringMethod {
 
         return clusters;
     }
-    
+
+    @Override
+    public void setPoints(List<Point> points) {
+        this.points = points;
+    }
+
     private boolean isCentroidsChanged(double distance){
     	return distance != 0;
     }
@@ -167,7 +172,4 @@ public class KMeansMethod implements ClusteringMethod {
     	System.out.println("Centroid distances: " + df.format(distance));
     }
 
-    public void setPoints(List<Point> points) {
-        this.points = points;
-    }
 }

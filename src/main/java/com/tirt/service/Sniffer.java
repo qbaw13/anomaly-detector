@@ -84,6 +84,8 @@ public class Sniffer extends Service<Void>{
         return new PacketListener() {
             @Override
             public void gotPacket(Packet packet) {
+                System.out.println(handle.getTimestamp());
+                System.out.println(packet);
                 packets.add(packet);
             }
         };

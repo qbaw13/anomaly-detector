@@ -1,5 +1,6 @@
 package com.tirt.api;
 
+import com.tirt.entity.Cluster;
 import com.tirt.entity.Point;
 import javafx.concurrent.Service;
 import javafx.concurrent.Worker;
@@ -17,6 +18,8 @@ public interface Clusterer {
     public ClusteringMethod getClusteringMethod();
 
     void setData(List<Point> points);
+
+    List<Cluster> getClusters();
 
     public enum DetectingStatus {
         NOT_STARTED,
