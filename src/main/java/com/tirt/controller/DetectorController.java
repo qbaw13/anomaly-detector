@@ -1,14 +1,11 @@
 package com.tirt.controller;
 
-import com.sun.deploy.panel.ITreeNode;
-import com.sun.deploy.panel.PropertyTreeModel;
-import com.sun.deploy.panel.TreeBuilder;
 import com.tirt.api.Clusterer;
 import com.tirt.api.EClusteringMethod;
 import com.tirt.service.ClusteringMethodMapper;
-import com.tirt.service.NetworkInterfaceReceiver;
-import com.tirt.service.NetworkInterfaceStringConverter;
+import com.tirt.utility.NetworkInterfaceStringConverter;
 import com.tirt.service.Sniffer;
+import com.tirt.utility.PacketDataExtractor;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -23,8 +20,6 @@ import org.pcap4j.core.PcapNetworkInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -86,7 +81,9 @@ public class DetectorController {
         Sniffer sniffer = detectorModel.createSniffer(interfaceChoiceBox.getSelectionModel().getSelectedItem(), packetsCount);
         detectorModel.startSniffer(sniffer);
         EClusteringMethod selectedMethod = ClusteringMethodMapper.map(toggleGroup.getSelectedToggle().toString());
-//        Clusterer clusterer = detectorModel.createClusterer(selectedMethod, packetCount, clusterCount);
+        Clusterer clusterer = detectorModel.createClusterer(selectedMethod, clustersCount);
+
+//        clusterer.setData(PacketDataExtractor.extractSthAndSth(sniffer.getCapturedPackets()));
 //        detectorModel.startClusterer(clusterer);
 
 

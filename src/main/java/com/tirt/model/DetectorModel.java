@@ -2,11 +2,9 @@ package com.tirt.model;
 
 import com.tirt.api.Clusterer;
 import com.tirt.api.EClusteringMethod;
-import com.tirt.service.NetworkInterfaceReceiver;
+import com.tirt.utility.NetworkInterfaceReceiver;
 import com.tirt.service.Sniffer;
-import org.pcap4j.core.PcapNativeException;
 import org.pcap4j.core.PcapNetworkInterface;
-import org.pcap4j.core.Pcaps;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,7 +23,7 @@ public class DetectorModel {
         return null;
     }
 
-    public Clusterer createClusterer(EClusteringMethod selectedMethod, int string, int clusterCount) {
+    public Clusterer createClusterer(EClusteringMethod selectedMethod, int clusterCount) {
         return null;
     }
 

@@ -1,9 +1,14 @@
 package com.tirt.service;
 
+import com.tirt.entity.Point;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.pcap4j.core.*;
 import org.pcap4j.packet.Packet;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Kuba on 15.04.2016.
@@ -13,6 +18,7 @@ public class Sniffer extends Service<Void>{
     private PcapNetworkInterface pcapNetworkInterface;
     private PcapStat pcapStat;
     private int packetsCount;
+    private List<Packet> packets;
 
     private static final String COUNT_KEY
             = Sniffer.class.getName() + ".count";
@@ -32,17 +38,29 @@ public class Sniffer extends Service<Void>{
 
     @Override
     protected Task<Void> createTask() {
-        String filter = "";
-        PcapHandle handle = openLive(SNAPLEN, PcapNetworkInterface.PromiscuousMode.PROMISCUOUS, READ_TIMEOUT);
-        if (filter.length() != 0) {
-            setHandleFilter(handle, filter, BpfProgram.BpfCompileMode.OPTIMIZE);
-        }
-        PacketListener listener = createListener(handle);
-        startLoop(handle, listener);
-        setStats(handle);
-        handle.close();
-        return null;
+        return new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                packets = new LinkedList<>();
+                String filter = "";
+                PcapHandle handle = openLive(SNAPLEN, PcapNetworkInterface.PromiscuousMode.PROMISCUOUS, READ_TIMEOUT);
+                if (filter.length() != 0) {
+                    setHandleFilter(handle, filter, BpfProgram.BpfCompileMode.OPTIMIZE);
+                }
+                PacketListener listener = createListener(handle);
+                startLoop(handle, listener);
+                setStats(handle);
+                handle.close();
+                return null;
+            }
+        };
     }
+
+    public List<Packet> getCapturedPackets() {
+        return packets;
+    }
+
+
     private PcapHandle openLive(int snaplen, PcapNetworkInterface.PromiscuousMode promiscuous, int readTimeout) {
         try {
             return pcapNetworkInterface.openLive(snaplen, promiscuous, readTimeout);
@@ -66,8 +84,7 @@ public class Sniffer extends Service<Void>{
         return new PacketListener() {
             @Override
             public void gotPacket(Packet packet) {
-                System.out.println(handle.getTimestamp());
-                System.out.println(packet);
+                packets.add(packet);
             }
         };
     }
@@ -87,7 +104,7 @@ public class Sniffer extends Service<Void>{
 
     private void setStats(PcapHandle handle) {
         try {
-            setPcapStat(handle.getStats());
+            pcapStat = handle.getStats();
         } catch (PcapNativeException e) {
             e.printStackTrace();
         } catch (NotOpenException e) {
@@ -101,15 +118,6 @@ public class Sniffer extends Service<Void>{
 
     public PcapNetworkInterface getPcapNetworkInterface() {
         return pcapNetworkInterface;
-    }
-
-
-    public PcapStat getPcapStat() {
-        return pcapStat;
-    }
-
-    public void setPcapStat(PcapStat pcapStat) {
-        this.pcapStat = pcapStat;
     }
 
     public void setPacketsCount(int packetsCount) {

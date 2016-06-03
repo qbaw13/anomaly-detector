@@ -1,4 +1,4 @@
-package com.tirt.service;
+package com.tirt.utility;
 
 import org.pcap4j.core.PcapNativeException;
 import org.pcap4j.core.PcapNetworkInterface;

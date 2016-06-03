@@ -1,6 +1,5 @@
-package com.tirt.service;
+package com.tirt.utility;
 
-import com.tirt.model.DetectorModel;
 import javafx.util.StringConverter;
 import org.pcap4j.core.PcapNetworkInterface;
 
