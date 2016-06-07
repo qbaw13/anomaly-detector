@@ -8,6 +8,7 @@ public class Cluster {
 	public List<Point> points;
 	public Point centroid;
 	public int id;
+	private String newick;
 
 	public Cluster(int id) {
 		this.id = id;

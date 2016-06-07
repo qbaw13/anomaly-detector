@@ -18,7 +18,7 @@ public class PacketDataExtractor {
         for(int i=0; i<packets.size(); i++) {
             double secondAttribute = 0;
 
-            double firstAttribute = packets.get(i).getRawData().length;
+            double firstAttribute = packets.get(i).getPayload().length();
 
             if(i == 0) {
                 secondAttribute = timestamps.get(1) - timestamps.get(0);

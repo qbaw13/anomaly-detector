@@ -46,42 +46,15 @@ public class HierarchicalMethod implements ClusteringMethod {
         Instances instances = createInstances();
         buildClusterer(instances);
         String newickFormat = getNewickFormat();
+        System.out.println(instances.toString());
         System.out.println(newickFormat);
-
-        try {
-            sendPost(newickFormat+";");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         return convertNewickToList(newickFormat);
     }
 
-    private void sendPost(String newick) throws IOException {
-        HttpClient httpclient = HttpClients.createDefault();
-        HttpPost httppost = new HttpPost("http://cgi-www.cs.au.dk/cgi-chili/phyfi/go");
-
-        // Request parameters and other properties.
-        List<NameValuePair> params = new ArrayList<NameValuePair>(2);
-        params.add(new BasicNameValuePair("param-1", "12345"));
-        params.add(new BasicNameValuePair("param-2", "Hello!"));
-        httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
-
-        //Execute and get the response.
-        HttpResponse response = httpclient.execute(httppost);
-        HttpEntity entity = response.getEntity();
-
-        if (entity != null) {
-            InputStream instream = entity.getContent();
-            try {
-                // do something useful
-            } finally {
-                instream.close();
-            }
-        }
-    }
-
     private List<Cluster> convertNewickToList(String newickFormat) {
+
+
         return null;
     }
 
@@ -118,5 +91,9 @@ public class HierarchicalMethod implements ClusteringMethod {
 
     public void setPoints(List<Point> points) {
         this.points = points;
+    }
+
+    public String printNewickTree(String newickFormat) {
+        return null;
     }
 }
