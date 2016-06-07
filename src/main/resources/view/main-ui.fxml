@@ -20,11 +20,6 @@
               <MenuItem mnemonicParsing="false" onAction="#onClear" text="Clear" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-            </items>
-          </Menu>
         </menus>
       </MenuBar>
    </top>
@@ -37,7 +32,7 @@
       </ToolBar>
    </bottom>
    <center>
-      <SplitPane dividerPositions="0.1755485893416928" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <SplitPane fx:id="splitPane" dividerPositions="0.1755485893416928" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>

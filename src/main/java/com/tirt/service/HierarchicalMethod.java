@@ -82,7 +82,7 @@ public class HierarchicalMethod implements ClusteringMethod {
             double[] instanceValues = new double[instances.numAttributes()];
             instanceValues[0] = point.getX();
             instanceValues[1] = point.getY();
-            instanceValues[2] = instances.attribute(2).addStringValue("["+point.getX()+"-"+point.getY()+"]");
+            instanceValues[2] = instances.attribute(2).addStringValue("["+point.getX()+"|"+point.getY()+"]");
             instances.add(new DenseInstance(1.0, instanceValues));
         }
 

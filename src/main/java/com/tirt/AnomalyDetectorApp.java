@@ -27,6 +27,7 @@ public class AnomalyDetectorApp extends Application {
 
         stage.setTitle("Anomaly Clusterer");
         stage.setScene(new Scene(loader.load()));
+        stage.setResizable(false);
         stage.show();
 
         this.primaryStage = stage;

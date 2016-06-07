@@ -9,6 +9,8 @@ import com.tirt.service.Sniffer;
 import com.tirt.utility.ClusteringMethodMapper;
 import com.tirt.utility.NetworkInterfaceStringConverter;
 import com.tirt.utility.PacketDataExtractor;
+import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -19,6 +21,7 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import com.tirt.model.DetectorModel;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
@@ -48,8 +51,12 @@ public class DetectorController {
     @FXML private Button start;
     @FXML private Button stop;
     @FXML private AnchorPane mainPane;
+    @FXML private SplitPane splitPane;
 
     private DetectorModel detectorModel;
+    private Sniffer sniffer;
+    private ClustererImpl clusterer;
+
 
     public DetectorController(DetectorModel detectorModel){
         this.detectorModel = detectorModel;
@@ -60,6 +67,10 @@ public class DetectorController {
         initNetworkInterfaceChoiceBox();
         initRadioButtons();
         initNumericTextFields();
+
+        for (Node divider:  splitPane.lookupAll(".split-pane-divider")) {
+            divider.setMouseTransparent(true);
+        }
     }
 
     private void initNumericTextFields() {
@@ -84,41 +95,68 @@ public class DetectorController {
     @FXML
     private void onStart() {
         LOGGER.info("onStart");
-        int packetsCount = Integer.parseInt(packetCountText.getText());
-        int clustersCount = Integer.parseInt(clusterCountText.getText());
-        setButtonsOnStart();
-        Sniffer sniffer = detectorModel.createSniffer(interfaceChoiceBox.getSelectionModel().getSelectedItem(), packetsCount);
-        detectorModel.startSniffer(sniffer);
 
-        sniffer.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-            @Override
-            public void handle(WorkerStateEvent event) {
+        if(!packetCountText.getText().isEmpty() && Integer.parseInt(packetCountText.getText()) > 0){
 
-                EClusteringMethod selectedMethod = (EClusteringMethod) toggleGroup.getSelectedToggle().getUserData();
-                ClustererImpl clusterer = (ClustererImpl) detectorModel.createClusterer(selectedMethod, clustersCount);
+            EClusteringMethod selectedMethod = (EClusteringMethod) toggleGroup.getSelectedToggle().getUserData();
 
-                clusterer.setData(PacketDataExtractor.extractSthAndSth(sniffer.getCapturedPackets(), sniffer.getTimestamps()));
-                clusterer.init();
-                detectorModel.startClusterer(clusterer);
+            if((selectedMethod == EClusteringMethod.K_MEANS && !clusterCountText.getText().isEmpty() && Integer.parseInt(clusterCountText.getText()) > 0) || selectedMethod == EClusteringMethod.HIERARCHICAL){
+                int packetsCount = Integer.parseInt(packetCountText.getText());
+                setButtonsOnStart();
+                sniffer = detectorModel.createSniffer(interfaceChoiceBox.getSelectionModel().getSelectedItem(), packetsCount);
+                detectorModel.startSniffer(sniffer);
 
-                clusterer.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                sniffer.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
                     @Override
                     public void handle(WorkerStateEvent event) {
-                        LOGGER.info("Clusterer succeed");
-                        if(selectedMethod == EClusteringMethod.K_MEANS) {
-                            drawCharts(clusterer.getClusters());
+
+
+
+                        if(selectedMethod == EClusteringMethod.K_MEANS){
+                            clusterer = (ClustererImpl) detectorModel.createClusterer(selectedMethod, Integer.parseInt(clusterCountText.getText()));
                         }
-                        else if (selectedMethod == EClusteringMethod.HIERARCHICAL) {
-                            pringNewick(clusterer.getClusters());
+                        else {
+                            clusterer = (ClustererImpl) detectorModel.createClusterer(selectedMethod, 0);
                         }
+
+                        clusterer.setData(PacketDataExtractor.extractSthAndSth(sniffer.getCapturedPackets(), sniffer.getTimestamps()));
+                        clusterer.init();
+                        detectorModel.startClusterer(clusterer);
+
+                        clusterer.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                            @Override
+                            public void handle(WorkerStateEvent event) {
+                                LOGGER.info("Clusterer succeed");
+                                if(selectedMethod == EClusteringMethod.K_MEANS) {
+                                    drawCharts(clusterer.getClusters());
+                                }
+                                else if (selectedMethod == EClusteringMethod.HIERARCHICAL) {
+                                    printNewick(clusterer.getClusters());
+                                }
+                                setButtonsOnStop();
+                            }
+                        });
                     }
                 });
             }
-        });
+            else {
+                displayInformationAlert("Error", "Please enter cluster count");
+            }
+        }
+        else {
+            displayInformationAlert("Error", "Please enter packet count");
+        }
+
 
 
     }
 
+    private void displayInformationAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        alert.show();
+    }
 
     private void drawCharts(List<Cluster> clusters) {
         mainPane.getChildren().clear();
@@ -155,10 +193,12 @@ public class DetectorController {
     }
 
 
-    private void pringNewick(List<Cluster> clusters) {
+    private void printNewick(List<Cluster> clusters) {
         mainPane.getChildren().clear();
 
         TextArea textArea = new TextArea();
+        textArea.setPrefWidth(mainPane.getWidth());
+        textArea.setPrefHeight(mainPane.getHeight());
 
         textArea.appendText(clusters.get(0).getNewick()+";");
 
@@ -169,16 +209,23 @@ public class DetectorController {
     private void onPause() {
         LOGGER.info("onPause");
         setButtonsOnStop();
+        if(sniffer!=null)
+            sniffer.cancel();
+        if(clusterer!=null)
+            clusterer.cancel();
     }
 
     @FXML
     private void onClear(){
         LOGGER.info("onClear");
+        mainPane.getChildren().clear();
     }
 
     @FXML
     private void onClose(){
         LOGGER.info("onClose");
+        Platform.exit();
+        System.exit(0);
     }
 
 
@@ -198,6 +245,19 @@ public class DetectorController {
         radioButton2.setUserData(EClusteringMethod.HIERARCHICAL);
         radioButton1.setText(EClusteringMethod.K_MEANS.toString());
         radioButton2.setText(EClusteringMethod.HIERARCHICAL.toString());
+
+        radioButton1.setSelected(true);
+        toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+                if(((RadioButton) newValue).getUserData() == EClusteringMethod.K_MEANS) {
+                    clusterCountText.setDisable(false);
+                }
+                else {
+                    clusterCountText.setDisable(true);
+                }
+            }
+        });
     }
 
     private void setButtonsOnStart() {
