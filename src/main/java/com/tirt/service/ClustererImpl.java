@@ -9,6 +9,8 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.scene.chart.Chart;
 import javafx.scene.chart.XYChart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,8 @@ import java.util.List;
  */
 
 public class ClustererImpl extends Service<Void> implements Clusterer{
+
+    private static Logger LOGGER = LoggerFactory.getLogger(ClustererImpl.class);
 
     private ClusteringMethod clusteringMethod;
     private List<Cluster> clusters;
@@ -31,7 +35,10 @@ public class ClustererImpl extends Service<Void> implements Clusterer{
         return new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                setClusters(clusteringMethod.execute());
+                LOGGER.info("Clusterer started");
+                List<Cluster> clusters = clusteringMethod.execute();
+                setClusters(clusters);
+                LOGGER.info("Clusterer succeed");
                 return null;
             }
         };
@@ -59,4 +66,8 @@ public class ClustererImpl extends Service<Void> implements Clusterer{
         this.clusters = clusters;
     }
 
+    public void init() {
+
+        ((KMeansMethod) clusteringMethod).init();
+    }
 }

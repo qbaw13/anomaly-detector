@@ -1,11 +1,16 @@
 package com.tirt.model;
 
 import com.tirt.api.Clusterer;
+import com.tirt.api.ClusteringMethod;
 import com.tirt.api.EClusteringMethod;
 import com.tirt.service.ClustererImpl;
+import com.tirt.service.HierarchicalMethod;
+import com.tirt.service.KMeansMethod;
 import com.tirt.utility.NetworkInterfaceReceiver;
 import com.tirt.service.Sniffer;
 import org.pcap4j.core.PcapNetworkInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,6 +19,8 @@ import java.util.List;
  * Created by Kuba on 26.03.2016.
  */
 public class DetectorModel {
+
+    private  static  Logger LOGGER = LoggerFactory.getLogger(DetectorModel.class);
 
     public List<PcapNetworkInterface> receiveNetworkInterfaces() {
         try {
@@ -25,9 +32,21 @@ public class DetectorModel {
     }
 
     public Clusterer createClusterer(EClusteringMethod selectedMethod, int clusterCount) {
-        //if(selectedMethod = kmneans)
-            // return new Clusterre(..)
-        return null;
+
+        Clusterer clusterer = new ClustererImpl();
+        ClusteringMethod clusteringMethod = null;
+
+        if(selectedMethod.equals(EClusteringMethod.K_MEANS)) {
+            clusteringMethod = new KMeansMethod(clusterCount);
+            ((KMeansMethod) clusteringMethod).setClusterCount(clusterCount);
+        }
+        else if(selectedMethod.equals(EClusteringMethod.HIERARCHICAL)) {
+            clusteringMethod = new HierarchicalMethod();
+        }
+
+        clusterer.setClusteringMethod(clusteringMethod);
+
+        return clusterer;
     }
 
     public void startClusterer(Clusterer clusterer) {
@@ -43,5 +62,6 @@ public class DetectorModel {
 
     public void startSniffer(Sniffer sniffer) {
         sniffer.start();
+        LOGGER.info("Sniffer started");
     }
 }

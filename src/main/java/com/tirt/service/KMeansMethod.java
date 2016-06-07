@@ -3,64 +3,68 @@ package com.tirt.service;
 import com.tirt.api.ClusteringMethod;
 import com.tirt.entity.Cluster;
 import com.tirt.entity.Point;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
- 
+import java.util.*;
+
 
 public class KMeansMethod implements ClusteringMethod {
- 
-	//Number of Clusters. This metric should be related to the number of points
-    private int NUM_CLUSTERS = 6;    
-    //Number of Points
-    private int NUM_POINTS = 50;
-    //Min and Max X and Y
-    private static final int MIN_COORDINATE = 0;
-    private static final int MAX_COORDINATE = 10;
-    
+
+    private static Logger LOGGER = LoggerFactory.getLogger(KMeansMethod.class);
+
+    private int clusterCount;
     private List<Point> points;
     private List<Cluster> clusters;
+    //private double firstAttributeWeight;
+    //private double secondAttributeWeight;
+    private double firstAttributeMax;
+    private double secondAttributeMax;
     
-    public KMeansMethod() {
+    public KMeansMethod(int clusterCount) {
+        this.clusterCount = clusterCount;
     	this.points = new ArrayList<>();
     	this.clusters = new ArrayList<>();
     }
-    
-//    public static void main(String[] args) {
-//
-//        KMeansMethod kmeans = new KMeansMethod();
-//        kmeans.init();
-//        kmeans.execute();
-//    }
-    
-    //Initializes the process
-//    public void init() {
-//    	//Create Points
-//    	points = Point.createRandomPoints(MIN_COORDINATE,MAX_COORDINATE,NUM_POINTS);
-//
-//    	//Create Clusters
-//    	//Set Random Centroids
-//    	for (int i = 0; i < NUM_CLUSTERS; i++) {
-//    		Cluster cluster = new Cluster(i);
-//    		Point centroid = Point.createRandomPoint(MIN_COORDINATE,MAX_COORDINATE);
-//    		cluster.setCentroid(centroid);
-//    		clusters.add(cluster);
-//    	}
-//
-//    	//Print Initial state
-//    	plotClusters();
-//    }
  
 	private void plotClusters() {
-    	for (int i = 0; i < NUM_CLUSTERS; i++) {
+    	for (int i = 0; i < clusterCount; i++) {
     		Cluster cluster = clusters.get(i);
             cluster.plotCluster();
     	}
     }
 
+    public void init() {
+        //Set Random Centroids
+        for (int i = 0; i < clusterCount; i++) {
+            Cluster cluster = new Cluster(i);
+
+
+            Comparator<Point> comparatorX = (Point p1, Point p2) -> new Double(p1.getX()+"").compareTo(p2.getX());
+            Point pointWithMinX = Collections.min(points, comparatorX);
+            Point pointWithMaxX = Collections.max(points, comparatorX);
+
+            System.out.println("max x to: " + pointWithMaxX.getX());
+            firstAttributeMax = pointWithMaxX.getX();
+            Comparator<Point> comparatorY = (Point p1, Point p2) -> new Double(p1.getY()+"").compareTo(p2.getY());
+            Point pointWithMinY = Collections.min(points, comparatorY);
+            Point pointWithMaxY = Collections.max(points, comparatorY);
+            System.out.println("max y to: " + pointWithMaxY.getY());
+            secondAttributeMax = pointWithMaxY.getY();
+
+            Point centroid = Point.createRandomPoint(pointWithMinX.getX(), pointWithMinY.getY(), pointWithMaxX.getX(), pointWithMaxY.getY());
+            cluster.setCentroid(centroid);
+            clusters.add(cluster);
+        }
+
+        //Print Initial state
+        plotClusters();
+    }
+
     @Override
     public List<Cluster> execute() {
+        LOGGER.info("KMeans method started");
         double distance = -1;
         int iteration = 0;
         List<Point> lastCentroids = new ArrayList<>();
@@ -105,7 +109,7 @@ public class KMeansMethod implements ClusteringMethod {
     }
     
     private List<Point> getCentroids() {
-    	List<Point> centroids = new ArrayList<Point>(NUM_CLUSTERS);
+    	List<Point> centroids = new ArrayList<Point>(clusterCount);
     	for(Cluster cluster : clusters) {
     		Point aux = cluster.getCentroid();
     		Point point = new Point(aux.getX(), aux.getY());
@@ -122,9 +126,9 @@ public class KMeansMethod implements ClusteringMethod {
         
         for(Point point : points) {
         	min = max;
-            for(int i = 0; i < NUM_CLUSTERS; i++) {
+            for(int i = 0; i < clusterCount; i++) {
             	Cluster c = clusters.get(i);
-                distance = Point.distance(point, c.getCentroid());
+                distance = Point.distance(point, c.getCentroid(), firstAttributeMax, secondAttributeMax);
                 if(distance < min){
                     min = distance;
                     cluster = i;
@@ -160,7 +164,7 @@ public class KMeansMethod implements ClusteringMethod {
     private double distanceBetweenNewAndOldCentroids(List<Point> lastCentroids, List<Point> currentCentroids){
     	double distance = 0;
     	for(int i = 0; i < lastCentroids.size(); i++) {
-    		distance += Point.distance(lastCentroids.get(i), currentCentroids.get(i));
+    		distance += Point.distance(lastCentroids.get(i), currentCentroids.get(i), firstAttributeMax, secondAttributeMax);
     	}
     	return distance;
     }
@@ -172,4 +176,7 @@ public class KMeansMethod implements ClusteringMethod {
     	System.out.println("Centroid distances: " + df.format(distance));
     }
 
+    public void setClusterCount(int clusterCount) {
+        this.clusterCount = clusterCount;
+    }
 }

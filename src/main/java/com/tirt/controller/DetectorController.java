@@ -2,19 +2,29 @@ package com.tirt.controller;
 
 import com.tirt.api.Clusterer;
 import com.tirt.api.EClusteringMethod;
+import com.tirt.entity.Cluster;
+import com.tirt.entity.Point;
+import com.tirt.service.ClustererImpl;
+import com.tirt.service.Sniffer;
 import com.tirt.utility.ClusteringMethodMapper;
 import com.tirt.utility.NetworkInterfaceStringConverter;
-import com.tirt.service.Sniffer;
+import com.tirt.utility.PacketDataExtractor;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import com.tirt.model.DetectorModel;
 import javafx.scene.Parent;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.ScatterChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import org.pcap4j.core.PcapNetworkInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +47,7 @@ public class DetectorController {
     @FXML private TextField clusterCountText;
     @FXML private Button start;
     @FXML private Button stop;
-    @FXML private TabPane tabPane;
+    @FXML private AnchorPane mainPane;
 
     private DetectorModel detectorModel;
 
@@ -80,16 +90,62 @@ public class DetectorController {
         Sniffer sniffer = detectorModel.createSniffer(interfaceChoiceBox.getSelectionModel().getSelectedItem(), packetsCount);
         detectorModel.startSniffer(sniffer);
 
-        EClusteringMethod selectedMethod = ClusteringMethodMapper.map(toggleGroup.getSelectedToggle().toString());
-        Clusterer clusterer = detectorModel.createClusterer(selectedMethod, clustersCount);
+        sniffer.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent event) {
 
-        //if koniec
-//          clusterer.setData(PacketDataExtractor.extractSthAndSth(sniffer.getCapturedPackets()));
-//          detectorModel.startClusterer(clusterer);
+                EClusteringMethod selectedMethod = (EClusteringMethod) toggleGroup.getSelectedToggle().getUserData();
+                ClustererImpl clusterer = (ClustererImpl) detectorModel.createClusterer(selectedMethod, clustersCount);
 
-            //if(koniec klasteryzacji)
-                // wyswietl wyniki
+                clusterer.setData(PacketDataExtractor.extractSthAndSth(sniffer.getCapturedPackets(), sniffer.getTimestamps()));
+                clusterer.init();
+                detectorModel.startClusterer(clusterer);
 
+                clusterer.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                    @Override
+                    public void handle(WorkerStateEvent event) {
+                        LOGGER.info("Clusterer succeed");
+                        drawCharts(clusterer.getClusters());
+                    }
+                });
+            }
+        });
+
+
+    }
+
+    private void drawCharts(List<Cluster> clusters) {
+        mainPane.getChildren().clear();
+
+        LOGGER.info("Drawing charts");
+
+        final NumberAxis xAxis = new NumberAxis();
+        final NumberAxis yAxis = new NumberAxis();
+
+        final ScatterChart<Number, Number> sc = new ScatterChart<Number,Number>(xAxis,yAxis);
+
+        xAxis.setLabel("Age (years)");
+        yAxis.setLabel("Returns to date");
+        sc.setTitle("Investment Overview");
+
+        XYChart.Series series1 = new XYChart.Series();
+        series1.setName("Equities");
+
+
+
+        for (int i=0; i<clusters.size(); i++) {
+            XYChart.Series tempSeries = new XYChart.Series();
+            tempSeries.setName("Cluster " + i);
+
+            for(Point point : clusters.get(i).points) {
+
+                tempSeries.getData().add(new XYChart.Data(point.getX(), point.getY()));
+            }
+
+            sc.getData().add(tempSeries);
+        }
+
+        mainPane.getChildren().add(sc);
     }
 
     @FXML
@@ -121,6 +177,8 @@ public class DetectorController {
         toggleGroup = new ToggleGroup();
         radioButton1.setToggleGroup(toggleGroup);
         radioButton2.setToggleGroup(toggleGroup);
+        radioButton1.setUserData(EClusteringMethod.K_MEANS);
+        radioButton2.setUserData(EClusteringMethod.HIERARCHICAL);
         radioButton1.setText(EClusteringMethod.K_MEANS.toString());
         radioButton2.setText(EClusteringMethod.HIERARCHICAL.toString());
     }
