@@ -18,7 +18,8 @@ import java.util.List;
 /**
  * Created by Kuba on 18.04.2016.
  */
-public class ClustererImpl  extends Service<Void> implements Clusterer{
+
+public class ClustererImpl extends Service<Void> implements Clusterer{
 
     private static Logger LOGGER = LoggerFactory.getLogger(ClustererImpl.class);
 
@@ -66,7 +67,9 @@ public class ClustererImpl  extends Service<Void> implements Clusterer{
     }
 
     public void init() {
+        if(clusteringMethod instanceof KMeansMethod) {
+            ((KMeansMethod) clusteringMethod).init();
+        }
 
-        ((KMeansMethod) clusteringMethod).init();
     }
 }

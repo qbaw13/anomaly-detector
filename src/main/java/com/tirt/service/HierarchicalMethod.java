@@ -12,9 +12,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import weka.clusterers.HierarchicalClusterer;
-import weka.core.Attribute;
-import weka.core.DenseInstance;
-import weka.core.Instances;
+import weka.core.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,12 +42,17 @@ public class HierarchicalMethod implements ClusteringMethod {
     public List<Cluster> execute() {
         hierarchicalClusterer = new HierarchicalClusterer();
         Instances instances = createInstances();
+        hierarchicalClusterer.setNumClusters(1);
         buildClusterer(instances);
-        String newickFormat = getNewickFormat();
-        System.out.println(instances.toString());
-        System.out.println(newickFormat);
 
-        return convertNewickToList(newickFormat);
+        String newickFormat = getNewickFormat();
+
+        List<Cluster> clusters = new ArrayList<>();
+        Cluster cluster = new Cluster(1);
+        cluster.setNewick(newickFormat);
+        clusters.add(cluster);
+
+        return clusters;
     }
 
     private List<Cluster> convertNewickToList(String newickFormat) {
@@ -70,13 +73,19 @@ public class HierarchicalMethod implements ClusteringMethod {
         ArrayList<Attribute> attributes = new ArrayList<>();
         attributes.add(new Attribute("x"));
         attributes.add(new Attribute("y"));
+        attributes.add(new Attribute("dim", (ArrayList<String>)null));
+
+        System.out.println("Asdads1");
+
         Instances instances = new Instances("temp", attributes, 0);
         for(Point point : points) {
             double[] instanceValues = new double[instances.numAttributes()];
             instanceValues[0] = point.getX();
             instanceValues[1] = point.getY();
+            instanceValues[2] = instances.attribute(2).addStringValue("["+point.getX()+"-"+point.getY()+"]");
             instances.add(new DenseInstance(1.0, instanceValues));
         }
+
         return instances;
     }
 

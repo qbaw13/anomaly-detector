@@ -17,6 +17,10 @@ public class KMeansMethod implements ClusteringMethod {
     private int clusterCount;
     private List<Point> points;
     private List<Cluster> clusters;
+    //private double firstAttributeWeight;
+    //private double secondAttributeWeight;
+    private double firstAttributeMax;
+    private double secondAttributeMax;
     
     public KMeansMethod(int clusterCount) {
         this.clusterCount = clusterCount;
@@ -37,12 +41,17 @@ public class KMeansMethod implements ClusteringMethod {
             Cluster cluster = new Cluster(i);
 
 
-            Comparator<Point> comparatorX = (Point p1, Point p2) -> new Double(p2.getX()+"").compareTo(p1.getX());
+            Comparator<Point> comparatorX = (Point p1, Point p2) -> new Double(p1.getX()+"").compareTo(p2.getX());
             Point pointWithMinX = Collections.min(points, comparatorX);
             Point pointWithMaxX = Collections.max(points, comparatorX);
-            Comparator<Point> comparatorY = (Point p1, Point p2) -> new Double(p2.getY()+"").compareTo(p1.getY());
+
+            System.out.println("max x to: " + pointWithMaxX.getX());
+            firstAttributeMax = pointWithMaxX.getX();
+            Comparator<Point> comparatorY = (Point p1, Point p2) -> new Double(p1.getY()+"").compareTo(p2.getY());
             Point pointWithMinY = Collections.min(points, comparatorY);
             Point pointWithMaxY = Collections.max(points, comparatorY);
+            System.out.println("max y to: " + pointWithMaxY.getY());
+            secondAttributeMax = pointWithMaxY.getY();
 
             Point centroid = Point.createRandomPoint(pointWithMinX.getX(), pointWithMinY.getY(), pointWithMaxX.getX(), pointWithMaxY.getY());
             cluster.setCentroid(centroid);
@@ -119,7 +128,7 @@ public class KMeansMethod implements ClusteringMethod {
         	min = max;
             for(int i = 0; i < clusterCount; i++) {
             	Cluster c = clusters.get(i);
-                distance = Point.distance(point, c.getCentroid());
+                distance = Point.distance(point, c.getCentroid(), firstAttributeMax, secondAttributeMax);
                 if(distance < min){
                     min = distance;
                     cluster = i;
@@ -155,7 +164,7 @@ public class KMeansMethod implements ClusteringMethod {
     private double distanceBetweenNewAndOldCentroids(List<Point> lastCentroids, List<Point> currentCentroids){
     	double distance = 0;
     	for(int i = 0; i < lastCentroids.size(); i++) {
-    		distance += Point.distance(lastCentroids.get(i), currentCentroids.get(i));
+    		distance += Point.distance(lastCentroids.get(i), currentCentroids.get(i), firstAttributeMax, secondAttributeMax);
     	}
     	return distance;
     }

@@ -32,6 +32,7 @@ public class DetectorModel {
     }
 
     public Clusterer createClusterer(EClusteringMethod selectedMethod, int clusterCount) {
+
         Clusterer clusterer = new ClustererImpl();
         ClusteringMethod clusteringMethod = null;
 

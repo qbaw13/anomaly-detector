@@ -51,9 +51,10 @@ public class Point {
     }
 
     //Calculates the distance between two points.
-    public static double distance(Point p, Point centroid) {
-//        return Math.sqrt(Math.pow((centroid.getY() - p.getY()), 2) + Math.pow((centroid.getX() - p.getX()), 2));
-        return Math.sqrt(Math.pow((centroid.getY() - p.getY()), 2) + Math.pow((centroid.getX() - p.getX()), 2));
+    public static double distance(Point p, Point centroid, double maxX, double maxY) {
+        //System.out.println("parametry: " + maxX + "," + maxY);
+        double firstAttributeWeight = maxX / maxY;
+        return Math.sqrt(Math.pow((centroid.getY() - p.getY()), 2)*firstAttributeWeight + Math.pow((centroid.getX() - p.getX()), 2));
     }
 
     //Creates random point

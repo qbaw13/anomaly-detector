@@ -53,5 +53,12 @@ public class Cluster {
 			System.out.println(p);
 		}
 	}
- 
+
+	public String getNewick() {
+		return newick;
+	}
+
+	public void setNewick(String newick) {
+		this.newick = newick;
+	}
 }

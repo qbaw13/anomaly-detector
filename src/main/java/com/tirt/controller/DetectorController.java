@@ -105,7 +105,12 @@ public class DetectorController {
                     @Override
                     public void handle(WorkerStateEvent event) {
                         LOGGER.info("Clusterer succeed");
-                        drawCharts(clusterer.getClusters());
+                        if(selectedMethod == EClusteringMethod.K_MEANS) {
+                            drawCharts(clusterer.getClusters());
+                        }
+                        else if (selectedMethod == EClusteringMethod.HIERARCHICAL) {
+                            pringNewick(clusterer.getClusters());
+                        }
                     }
                 });
             }
@@ -113,6 +118,7 @@ public class DetectorController {
 
 
     }
+
 
     private void drawCharts(List<Cluster> clusters) {
         mainPane.getChildren().clear();
@@ -124,9 +130,9 @@ public class DetectorController {
 
         final ScatterChart<Number, Number> sc = new ScatterChart<Number,Number>(xAxis,yAxis);
 
-        xAxis.setLabel("Age (years)");
-        yAxis.setLabel("Returns to date");
-        sc.setTitle("Investment Overview");
+        xAxis.setLabel("ilość danych [bajty]");
+        yAxis.setLabel("czas [ms]");
+        sc.setTitle("Klasteryzacja K-średnich");
 
         XYChart.Series series1 = new XYChart.Series();
         series1.setName("Equities");
@@ -146,7 +152,17 @@ public class DetectorController {
         }
 
         mainPane.getChildren().add(sc);
+    }
 
+
+    private void pringNewick(List<Cluster> clusters) {
+        mainPane.getChildren().clear();
+
+        TextArea textArea = new TextArea();
+
+        textArea.appendText(clusters.get(0).getNewick()+";");
+
+        mainPane.getChildren().add(textArea);
     }
 
     @FXML
@@ -193,4 +209,6 @@ public class DetectorController {
         start.setDisable(false);
         stop.setDisable(true);
     }
+
+
 }
